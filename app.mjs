@@ -125,7 +125,7 @@ async function finishImage(){
   }finally{state.exporting=false;render();}
 }
 function reset(){
-  stopCamera();state.photos.forEach(p=>URL.revokeObjectURL(p.url));state.photos=[];state.selected=[];state.frame='milk';state.filter='original';state.caption='';state.showDate=true;state.date=localDate();state.mirror=true;state.facing='user';$('caption').value='';$('show-date').checked=true;$('timer').value='5';$('shot-count').value='8';$('file-input').value='';cameraError('');
+  stopCamera();state.photos.forEach(p=>URL.revokeObjectURL(p.url));state.photos=[];state.selected=[];state.frame='milk';state.filter='original';state.caption='';state.showDate=true;state.date=localDate();state.mirror=true;state.facing='user';$('caption').value='';$('show-date').checked=true;$('timer').value='3';$('shot-count').value='8';$('file-input').value='';cameraError('');
   if(state.exportURL){URL.revokeObjectURL(state.exportURL);state.exportURL=null;}$('result-image').removeAttribute('src');$('download-image').removeAttribute('href');$('reset-dialog').close();setSource('camera');render();window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
 }
 for(const frame of FRAMES){const button=document.createElement('button');button.type='button';button.className='swatch';button.style.backgroundColor=frame.color;button.style.color=frame.ink;button.dataset.frame=frame.id;button.setAttribute('aria-label',`${frame.name} 프레임`);button.title=frame.name;button.addEventListener('click',()=>{if(state.exporting)return;state.frame=frame.id;render();});$('frame-swatches').append(button);}
