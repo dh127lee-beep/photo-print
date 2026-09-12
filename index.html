@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3154ed">
+  <meta name="description" content="촬영하고, 고르고, 간직하세요. 휴대폰에서 바로 만드는 나만의 네 컷 사진. 사진은 업로드되지 않습니다.">
+  <title>네컷모먼트 — FOURFOLD</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233154ed'/%3E%3Cg fill='white'%3E%3Crect x='7' y='6' width='7' height='8' rx='1'/%3E%3Crect x='18' y='6' width='7' height='8' rx='1'/%3E%3Crect x='7' y='18' width='7' height='8' rx='1'/%3E%3Crect x='18' y='18' width='7' height='8' rx='1'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="네컷모먼트 처음으로"><span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>FOURFOLD<small>네컷모먼트</small></span></a>
+    <span class="header-note">YOUR LITTLE PHOTO BOOTH</span>
+    <button id="reset-button" class="text-button" type="button"><span data-icon="restart"></span>처음부터</button>
+  </header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">FOUR PHOTOS. ONE GOOD MEMORY.</p><h1>오늘을 <span>네 컷에.</span></h1></div><p>찍고, 고르고, 간직하세요.<br>지금 이 순간, 우리만의 작은 포토부스.</p></div>
+    <div class="workspace">
+      <section class="capture-panel" aria-labelledby="capture-heading">
+        <div class="section-heading"><h2 id="capture-heading"><span class="step">01</span>사진 준비하기</h2><span id="photo-total" class="muted small">0 / 8장</span></div>
+        <div class="source-tabs" role="tablist" aria-label="사진 가져오는 방법"><button id="camera-tab" role="tab" aria-selected="true" aria-controls="camera-pane"><span data-icon="camera"></span>바로 촬영</button><button id="upload-tab" role="tab" aria-selected="false" aria-controls="upload-pane" tabindex="-1"><span data-icon="image"></span>사진 불러오기</button></div>
+        <div id="camera-pane" role="tabpanel" aria-labelledby="camera-tab">
+          <div class="viewfinder" id="viewfinder">
+            <video id="camera-video" autoplay playsinline muted aria-label="카메라 미리보기" hidden></video>
+            <div class="camera-empty" id="camera-empty"><div class="camera-mark"><span data-icon="camera"></span></div><h3>카메라 앞에 모여볼까요?</h3><p>혼자여도, 함께여도 좋아요.</p><button id="enable-camera" class="primary compact" type="button"><span data-icon="camera"></span>카메라 켜기</button></div>
+            <div class="viewfinder-info"><span id="camera-status">PHOTO BOOTH</span><span class="viewfinder-corner">4:3</span></div>
+            <div class="viewfinder-cross a"></div><div class="viewfinder-cross b"></div><div class="viewfinder-cross c"></div><div class="viewfinder-cross d"></div>
+            <div id="countdown" class="countdown" aria-live="off" hidden></div>
+            <div id="capture-flash" class="capture-flash" hidden></div>
+            <div id="camera-options" class="camera-options" hidden><button id="flip-camera" type="button" aria-label="전면·후면 카메라 전환" title="카메라 전환"><span data-icon="flip"></span></button><button id="mirror-camera" type="button" aria-label="거울 모드" aria-pressed="true" title="거울 모드"><span data-icon="mirror"></span></button></div>
+          </div>
+          <p id="camera-error" class="inline-message error" role="alert" hidden></p>
+          <div class="capture-settings"><label><span data-icon="timer"></span>타이머<select id="timer" aria-label="촬영 간격"><option value="3">3초</option><option value="5" selected>5초</option><option value="10">10초</option></select></label><label>촬영 수<select id="shot-count" aria-label="촬영 장수"><option value="4">4장</option><option value="8" selected>8장</option></select></label><button id="sound-button" type="button" class="icon-button" aria-label="촬영 안내음" aria-pressed="true" title="촬영 안내음"><span data-icon="volume"></span></button></div>
+          <button id="capture-button" class="shutter-button" type="button" disabled><span class="shutter-dot"></span><span id="capture-label">8장 연속 촬영</span><span data-icon="arrow"></span></button>
+          <p class="camera-tip" id="camera-tip">휴대폰을 세워두고, 타이머에 맞춰 포즈를 바꿔보세요.</p>
+        </div>
+        <div id="upload-pane" role="tabpanel" aria-labelledby="upload-tab" hidden>
+          <div id="drop-zone" class="upload-zone"><span class="upload-mark" data-icon="image"></span><h3>좋아하는 순간을 골라주세요.</h3><p>최대 8장을 불러와 네 장을 고를 수 있어요.</p><button id="choose-photos" class="primary compact" type="button"><span data-icon="plus"></span>앨범에서 선택</button><p class="small muted">JPG, PNG, WebP · 사진당 최대 20MB</p></div>
+        </div>
+        <input id="file-input" type="file" accept="image/*" multiple hidden>
+        <div class="selection-heading"><h3>마음에 드는 네 장 <span id="selection-count">0/4</span></h3><button id="add-photos" class="text-button" type="button"><span data-icon="plus"></span>사진 추가</button></div>
+        <p class="small muted selection-tip">선택한 순서대로 담겨요. 다시 누르면 선택이 해제돼요.</p>
+        <div id="photo-tray" class="photo-tray" aria-label="사진 선택"></div>
+        <div class="privacy-note"><span data-icon="lock"></span>사진은 업로드되지 않고, 이 브라우저 안에서만 처리돼요.</div>
+      </section>
+      <section class="editor-panel" aria-labelledby="editor-heading">
+        <div class="section-heading"><h2 id="editor-heading"><span class="step">02</span>우리답게 꾸미기</h2><span class="muted small">LIVE PREVIEW</span></div>
+        <div class="editor-workspace">
+          <div class="preview-stage"><div class="preview-stage-top"><span id="preview-badge">미리보기 예시</span><span class="small">✦</span></div><div class="paper-holder"><canvas id="strip-preview" width="400" height="1200" role="img" aria-label="네 컷 사진 미리보기"></canvas></div><p id="preview-hint">사진을 고르면 여기에 담겨요.</p></div>
+          <div class="editing-controls">
+            <fieldset><legend>프레임 <span id="frame-name">밀크</span></legend><div class="swatches" id="frame-swatches"></div></fieldset>
+            <fieldset><legend>사진 필터</legend><div id="filter-options" class="filter-options"></div></fieldset>
+            <div class="caption-field"><label for="caption">한 줄의 기억 <span id="caption-count">0/24</span></label><input id="caption" type="text" maxlength="24" placeholder="우리의 가장 좋은 날" autocomplete="off"></div>
+            <label class="date-toggle"><span>오늘 날짜 넣기</span><input id="show-date" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+            <p class="editing-help"><span data-icon="sparkle"></span>색을 바꾸고, 짧은 말을 남겨보세요.</p>
+          </div>
+        </div>
+        <button id="finish-button" class="primary finish-button" type="button" disabled><span data-icon="sparkle"></span><span id="finish-label">사진 네 장을 골라주세요</span><span data-icon="arrow"></span></button>
+        <p class="export-note">완성 이미지를 확인하고 PNG로 저장할 수 있어요.</p>
+      </section>
+    </div>
+  </main>
+  <footer><span>FOURFOLD</span><p>작은 네 컷, 오래 남을 오늘.</p><span>MADE FOR YOUR MOMENTS</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="result-dialog" class="result-dialog" aria-labelledby="result-title"><div class="result-header"><div><p class="eyebrow">A MOMENT TO KEEP</p><h2 id="result-title">오늘의 네 컷 완성!</h2></div><button id="close-result" class="icon-button" type="button" aria-label="편집으로 돌아가기"><span data-icon="close"></span></button></div><div class="result-image-wrap"><img id="result-image" alt="직접 만든 네 컷 사진"></div><p class="save-tip">이미지를 길게 눌러 저장할 수도 있어요.</p><a id="download-image" class="primary" download="fourfold.png"><span data-icon="download"></span>이미지 다운로드</a><button id="continue-editing" class="secondary" type="button">조금 더 꾸미기</button></dialog>
+  <dialog id="reset-dialog" class="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">새로운 네 컷을 만들까요?</h2><p>현재 사진과 편집 내용은 사라져요.<br>완성한 사진은 먼저 다운로드해 주세요.</p><div><button id="cancel-reset" class="secondary" type="button">이어서 만들기</button><button id="confirm-reset" class="primary" type="button">처음부터</button></div></dialog>
+  <noscript><p class="noscript">사진을 촬영하고 편집하려면 JavaScript를 켜주세요.</p></noscript>
+</body>
+</html>
