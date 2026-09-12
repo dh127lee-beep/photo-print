@@ -1,4 +1,5 @@
-import {FRAMES,templateLayout,cropRect,applyFilter,mix} from './core.mjs?v=2';
+import {FRAMES,templateLayout,cropRect,applyFilter,mix,printSize,DEFAULT_TEMPLATE} from './core.mjs?v=4';
+import {drawArtworkBackdrop,drawArtworkPhotoBorder,drawBirthdayTitle} from './artwork.mjs?v=4';
 
 function slotPath(ctx,{x,y,w,h,r},shape){
   ctx.beginPath();
@@ -65,6 +66,7 @@ function drawPhoto(ctx,slot,index,layout,frame,config,makeCanvas){
     ctx.fillText(String(index+1).padStart(2,'0'),slot.x+slot.w/2,slot.y+slot.h/2);
   }
   ctx.restore();
+  drawArtworkPhotoBorder(ctx,slot,layout,frame,index);
   if((t.deco||[]).includes('numbers')){
     const tw=.052*W,th=.03*W,tx=slot.x+.018*W,ty=slot.y+slot.h-th-.018*W;
     ctx.fillStyle=frame.color;roundRect(ctx,tx,ty,tw,th,th*.32);ctx.fill();
@@ -78,14 +80,17 @@ function drawText(ctx,layout,frame,config){
   const scale=text.size??Math.max(.5,Math.min(1.15,t.footer/.32));
   ctx.fillStyle=frame.ink;ctx.textAlign=align;ctx.textBaseline='middle';
   const x=(text.x??.5)*W,caption=config.caption.trim();
-  ctx.font=`italic 600 ${72*u*scale}px Georgia, serif`;
-  ctx.fillText('fourfold.',x,(text.brand??t.ratio-t.footer*.7)*W);
+  drawBirthdayTitle(ctx,config.artwork,{
+    x,y:(text.brand??t.ratio-t.footer*.7)*W,align,
+    maxWidth:(text.max??(t.art ? .46 : 1-t.pad*2))*W,maxHeight:90*u*scale,
+    light:frame.ink==='#ffffff'
+  });
   if(caption){
-    const max=(text.max??1-t.pad*2)*W,min=22*u*scale;let size=39*u*scale;
+    const max=(text.max??(t.art ? .46 : 1-t.pad*2))*W,min=22*u*scale;let size=39*u*scale;
     const font=s=>`500 ${s}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
     ctx.font=font(size);
     while(size>min&&ctx.measureText(caption).width>max){size-=u*scale;ctx.font=font(size);}
-    ctx.fillText(caption,x,(text.caption??t.ratio-t.footer*.44)*W);
+    ctx.fillText(caption,x,(text.caption??t.ratio-t.footer*.44)*W,max);
   }
   if(config.showDate){
     ctx.globalAlpha=.78;ctx.font=`500 ${30*u*scale}px ui-monospace, monospace`;
@@ -95,14 +100,29 @@ function drawText(ctx,layout,frame,config){
 }
 /** Render from original images at the requested size; preview and export share this path. */
 export function renderStrip(canvas,width,config,makeCanvas=()=>document.createElement('canvas')){
-  const layout=templateLayout(config.template||'classic',width),frame=FRAMES.find(f=>f.id===config.frame);
+  const layout=templateLayout(config.template||DEFAULT_TEMPLATE,width),frame=FRAMES.find(f=>f.id===config.frame);
   if(!frame)throw new Error('알 수 없는 프레임입니다.');
   canvas.width=Math.round(layout.width);canvas.height=Math.round(layout.height);
   const ctx=canvas.getContext('2d');
   ctx.fillStyle=frame.color;ctx.fillRect(0,0,canvas.width,canvas.height);
   backdrop(ctx,layout,frame);
+  drawArtworkBackdrop(ctx,layout,frame,config.artwork);
   layout.slots.forEach((slot,i)=>drawPhoto(ctx,slot,i,layout,frame,config,makeCanvas));
   overlay(ctx,layout,frame);
   drawText(ctx,layout,frame,config);
+  return canvas;
+}
+
+/** Fit the entire design inside a print sheet, with a 3.5% trim-safe margin. */
+export function renderPrint(canvas,width,config,makeCanvas=()=>document.createElement('canvas')){
+  const size=printSize(config.printSize),layout=templateLayout(config.template||DEFAULT_TEMPLATE,width);
+  const height=Math.round(width*size.height/size.width),margin=width*.035;
+  const scale=Math.min((width-2*margin)/width,(height-2*margin)/layout.height);
+  const design=makeCanvas();renderStrip(design,Math.max(1,Math.round(width*scale)),config,makeCanvas);
+  canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext('2d');ctx.fillStyle=FRAMES.find(f=>f.id===config.frame).color;
+  ctx.fillRect(0,0,width,height);
+  ctx.drawImage(design,(width-design.width)/2,(height-design.height)/2);
+  design.width=design.height=1;
   return canvas;
 }

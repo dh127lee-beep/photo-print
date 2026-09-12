@@ -1,4 +1,5 @@
 export const FRAMES = [
+  {id:'paper',name:'크림 페이퍼',color:'#faf6ed',ink:'#292521'},
   {id:'milk',name:'밀크',color:'#ffffff',ink:'#273049'},
   {id:'ink',name:'블랙',color:'#23252c',ink:'#ffffff'},
   {id:'cobalt',name:'코발트',color:'#3154ed',ink:'#ffffff'},
@@ -11,6 +12,22 @@ export const FRAMES = [
   {id:'silver',name:'실버',color:'#d7dce6',ink:'#485064'}
 ];
 export const FILTERS = [{id:'original',name:'오리지널'},{id:'mono',name:'흑백'},{id:'warm',name:'웜'},{id:'cool',name:'쿨'},{id:'film',name:'필름'}];
+
+export const DEFAULT_TEMPLATE='ribbon-party';
+export const DEFAULT_FRAME='paper';
+export const DEFAULT_SHOT_COUNT=4;
+export const BIRTHDAY_DATE='2025.09.22';
+export const PRINT_SIZES=[
+  {id:'4x6',name:'4 × 6인치',ratioLabel:'2:3',width:1200,height:1800,dpi:300},
+  {id:'5x7',name:'5 × 7인치',ratioLabel:'5:7',width:1500,height:2100,dpi:300},
+  {id:'6x8',name:'6 × 8인치',ratioLabel:'3:4',width:1800,height:2400,dpi:300}
+];
+export const DEFAULT_PRINT_SIZE='4x6';
+export function printSize(id=DEFAULT_PRINT_SIZE){
+  const size=PRINT_SIZES.find(s=>s.id===id);
+  if(!size)throw new Error('알 수 없는 인화 규격입니다.');
+  return size;
+}
 
 /* 템플릿 좌표는 모두 "가로 폭 = 1" 기준의 비율입니다. 세로 값도 같은 단위라 어떤 해상도로도 그대로 확대됩니다. */
 function gridSlots({cols,rows,pad=.06,gap=.028,top,cell=.75}){
@@ -32,6 +49,11 @@ function finish({bottom,tilt,...template}){
 }
 
 export const TEMPLATES = [
+  fromGrid('ribbon-party','리본 파티',{cols:2,rows:2,pad:.105,gap:.065,top:.32,cell:1,footer:.39},{art:'ribbon',matte:.008,radius:.012}),
+  fromGrid('birthday','생일 케이크',{cols:2,rows:2,pad:.10,gap:.06,top:.30,cell:1,footer:.41},{art:'birthday',radius:.025}),
+  fromGrid('love-letter','하트 레터',{cols:1,rows:4,pad:.19,gap:.06,top:.30,cell:.70,footer:.34},{art:'love',radius:.02}),
+  fromGrid('party-ticket','파티 티켓',{cols:1,rows:4,pad:.16,gap:.05,top:.29,cell:.70,footer:.33},{art:'ticket',radius:.035}),
+  fromGrid('scrapbook','파티 다이어리',{cols:2,rows:2,pad:.115,gap:.10,top:.32,cell:.95,footer:.41},{art:'scrapbook',matte:.018,shadow:true,tilt:[-3,2,2,-3]}),
   fromGrid('classic','클래식',{cols:1,rows:4,pad:.06,gap:.0391667,top:.0625,cell:.710227,footer:.32}),
   fromGrid('round','라운드',{cols:1,rows:4,pad:.075,gap:.035,top:.075,cell:.72,footer:.3},{radius:.05}),
   fromGrid('filmroll','필름롤',{cols:1,rows:4,pad:.135,gap:.03,top:.07,cell:.72,footer:.3},{deco:['sprockets','numbers']}),
