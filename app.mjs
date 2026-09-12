@@ -1,4 +1,4 @@
-import {FRAMES,FILTERS,TEMPLATES,templateLayout,exportWidth,localDate,moveSelection} from './core.mjs';
+import {FRAMES,FILTERS,TEMPLATES,cropRect,templateLayout,exportWidth,localDate,moveSelection} from './core.mjs';
 import {renderStrip} from './renderer.mjs';
 
 const $=id=>document.getElementById(id);
