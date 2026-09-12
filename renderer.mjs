@@ -1,4 +1,4 @@
-import {FRAMES,templateLayout,cropRect,applyFilter,mix} from './core.mjs';
+import {FRAMES,templateLayout,cropRect,applyFilter,mix} from './core.mjs?v=2';
 
 function slotPath(ctx,{x,y,w,h,r},shape){
   ctx.beginPath();

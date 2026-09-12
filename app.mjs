@@ -1,5 +1,5 @@
-import {FRAMES,FILTERS,TEMPLATES,cropRect,templateLayout,exportWidth,localDate,moveSelection} from './core.mjs';
-import {renderStrip} from './renderer.mjs';
+import {FRAMES,FILTERS,TEMPLATES,cropRect,templateLayout,exportWidth,localDate,moveSelection} from './core.mjs?v=2';
+import {renderStrip} from './renderer.mjs?v=2';
 
 const $=id=>document.getElementById(id);
 const paths={camera:'<path d="M14.5 4h-5L7.8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.8Z"/><circle cx="12" cy="13.5" r="3.5"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',plus:'<path d="M12 5v14M5 12h14"/>',close:'<path d="m6 6 12 12M6 18 18 6"/>',check:'<path d="m5 12 4 4L19 6"/>',restart:'<path d="M3 11a9 9 0 1 1 2.5 7M3 4v7h7"/>',timer:'<circle cx="12" cy="14" r="8"/><path d="M12 10v4l2 2M9 2h6m-3 0v4m6 1 2-2"/>',flip:'<path d="m16 3 4 4-4 4M20 7H8a5 5 0 0 0-5 5m5 9-4-4 4-4m-4 4h12a5 5 0 0 0 5-5"/>',mirror:'<path d="M12 3v18M8 5 3 19h5ZM16 5l5 14h-5Z"/>',volume:'<path d="m11 5-6 4H2v6h3l6 4Zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v2"/>',sparkle:'<path d="m12 3 2.7 6.3L21 12l-6.3 2.7L12 21l-2.7-6.3L3 12l6.3-2.7ZM20 2v4m-2-2h4"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>'};
@@ -158,7 +158,7 @@ $('reset-button').addEventListener('click',()=>{if(busy())return;if(state.photos
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state.stream||state.connecting)){const wasCapturing=state.capturing;stopCamera();if(wasCapturing)cameraError('화면을 벗어나 촬영을 멈췄어요. 카메라를 켜면 이어서 촬영할 수 있어요.');}});
 window.addEventListener('pagehide',()=>{state.controller?.abort();state.request++;state.stream?.getTracks().forEach(t=>t.stop());state.stream=null;state.ready=false;state.connecting=false;});
 window.addEventListener('pageshow',e=>{if(e.persisted){$('camera-video').srcObject=null;render();}});
-imageFromURL(new URL('./sample.jpg',import.meta.url).href).then(image=>{state.sample=image;schedulePreview();}).catch(()=>{});
+imageFromURL(new URL('./sample.jpg?v=2',import.meta.url).href).then(image=>{state.sample=image;schedulePreview();}).catch(()=>{});
 render();
 
 // Optional agent interface. It shares the visible editor's state and never uploads photos.
